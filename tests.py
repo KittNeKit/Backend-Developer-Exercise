@@ -17,6 +17,12 @@ class TestPaginationFooter(unittest.TestCase):
         ),
         (333, 3333333, 3, 3, "1 2 3 ... 330 331 332 333 334 335 336 ... 3333331 3333332 3333333"),
         (333, 3333333, 3, 0, "1 2 3 ... 333 ... 3333331 3333332 3333333"),
+        (5, 10, 11, 1, "1 2 3 4 5 6 7 8 9 10"),
+        (50, 25, 50, 20, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25"),
+        (1, 10, 6, 1, "1 2 3 4 5 6 7 8 9 10"),
+        (1, 25, 15, 1, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25"),
+        (5, 10, 6, 1, "1 2 3 4 5 6 7 8 9 10"),
+        (11, 25, 15, 1, "1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25"),
     ]
 
     def setUp(self):
@@ -27,8 +33,10 @@ class TestPaginationFooter(unittest.TestCase):
 
     def test_pagination_footer(self):
         for current_page, total_pages, boundaries, around, expected_result in self.test_data:
-            sys.stdout = my_stdout = StringIO()
-            Pagination.create_pagination(current_page, total_pages, boundaries, around)
-            sys.stdout = self.old_stdout
-            result = my_stdout.getvalue()
-            self.assertEqual(result.strip(), expected_result)
+            with self.subTest(current_page=current_page, total_pages=total_pages,
+                              boundaries=boundaries, around=around, expected_result=expected_result):
+                sys.stdout = my_stdout = StringIO()
+                Pagination.create_pagination(current_page, total_pages, boundaries, around)
+                sys.stdout = self.old_stdout
+                result = my_stdout.getvalue()
+                self.assertEqual(result.strip(), expected_result)
